@@ -1,5 +1,3 @@
-
-
 Temat projekta:
 
 Prosty system bankowy umożliwiający: zakładanie kont, wpłaty i wypłaty oraz sprawdzanie salda.
