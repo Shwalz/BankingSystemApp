@@ -7,11 +7,11 @@ import java.util.List;
 import models.Account;
 import services.Currency;
 
-public class AccountDao {
+public class AccountDao extends DatabaseAccessObject<Account> {
     private static final String ACCOUNT_DATA_FILE = "accountdata.txt";
     private static final String FILE_ENCODING = "UTF-8";
 
-    public List<Account> loadAccounts() throws IOException {
+    public List<Account> load() throws IOException {
         List<Account> accounts = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
@@ -19,7 +19,7 @@ public class AccountDao {
                         FILE_ENCODING))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Account account = parseAccountFromLine(line);
+                Account account = parseFromLine(line);
                 if (account != null) {
                     accounts.add(account);
                 }
@@ -30,8 +30,8 @@ public class AccountDao {
         return accounts;
     }
 
-    public void saveAccount(Account account) throws IOException {
-        List<Account> accounts = loadAccounts();
+    public void save(Account account) throws IOException {
+        List<Account> accounts = load();
         int index = -1;
         for (int i = 0; i < accounts.size(); i++) {
             if (accounts.get(i).getAccountNumber().equals(account.getAccountNumber())) {
@@ -49,7 +49,7 @@ public class AccountDao {
                         new FileOutputStream(ACCOUNT_DATA_FILE),
                         FILE_ENCODING))) {
             for (Account a : accounts) {
-                String line = convertAccountToLine(a);
+                String line = convertToLine(a);
                 writer.write(line);
                 writer.newLine();
             }
@@ -58,7 +58,7 @@ public class AccountDao {
         }
     }
 
-    private Account parseAccountFromLine(String line) {
+    public Account parseFromLine(String line) {
         String[] parts = line.split(",");
         if (parts.length == 3) {
             String accountNumber = parts[0];
@@ -70,7 +70,7 @@ public class AccountDao {
         }
     }
 
-    private String convertAccountToLine(Account account) {
+    public String convertToLine(Account account) {
         String accountNumber = account.getAccountNumber();
         String currency = account.getCurrency().name();
         String balance = Double.toString(account.getBalance());

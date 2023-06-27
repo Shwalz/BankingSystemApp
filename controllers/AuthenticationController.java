@@ -12,7 +12,7 @@ import models.User;
 import models.User.UserType;
 import gui.AuthenticationPanel;
 
-public class AuthenticationController {
+public class AuthenticationController implements InitializableUI {
     private UserDao userDao;
     private AccountDao accountDao;
     private JFrame authenticationFrame;
@@ -25,7 +25,8 @@ public class AuthenticationController {
         authenticationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void startAuthentication() {
+    @Override
+    public void startUserInterface() {
         AuthenticationPanel panel = new AuthenticationPanel(this);
         authenticationFrame.getContentPane().add(panel);
         authenticationFrame.pack();
@@ -36,7 +37,7 @@ public class AuthenticationController {
         List<User> users;
 
         try {
-            users = userDao.loadUsers();
+            users = userDao.load();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(authenticationFrame, "Error loading user data. Please try again.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             return;
@@ -92,7 +93,7 @@ public class AuthenticationController {
         }
 
         try {
-            List<User> users = userDao.loadUsers();
+            List<User> users = userDao.load();
             for (User user : users) {
                 if (user.getUsername().equals(username)) {
                     JOptionPane.showMessageDialog(authenticationFrame, "Username already exists. Please try again.", "Registration Failed", JOptionPane.ERROR_MESSAGE);
@@ -101,7 +102,7 @@ public class AuthenticationController {
             }
 
             User newUser = new User(username, password, userType);
-            userDao.saveUser(newUser);
+            userDao.save(newUser);
             JOptionPane.showMessageDialog(authenticationFrame, "Registration successful! Please, log in.", "Registration Successful", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(authenticationFrame, "Error saving user data. Please try again.", "Registration Failed", JOptionPane.ERROR_MESSAGE);
@@ -110,6 +111,6 @@ public class AuthenticationController {
 
     private void initializeClientUI() {
         ClientController clientController = new ClientController(userDao, accountDao);
-        clientController.startClientInterface();
+        clientController.startUserInterface();
     }
 }

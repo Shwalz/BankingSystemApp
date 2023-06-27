@@ -7,6 +7,6 @@ public class Main {
         UserDao userDao = new UserDao();
         AccountDao accountDao = new AccountDao();
         AuthenticationController authenticationController = new AuthenticationController(userDao, accountDao);
-        authenticationController.startAuthentication();
+        authenticationController.startUserInterface();
     }
 }

@@ -13,7 +13,7 @@ import services.Currency;
 import gui.ClientPanel;
 
 
-public class ClientController {
+public class ClientController implements InitializableUI{
     private UserDao userDao;
     private AccountDao accountDao;
     private Account selectedAccount;
@@ -37,7 +37,8 @@ public class ClientController {
         initializeAccountList();
     }
 
-    public void startClientInterface() {
+    @Override
+    public void startUserInterface() {
         ClientPanel panel = new ClientPanel(this);
         clientFrame.getContentPane().add(panel);
         clientFrame.pack();
@@ -48,7 +49,7 @@ public class ClientController {
     private void initializeAccountList() {
         try {
             accountListModel.clear();
-            accountListModel.addAll(accountDao.loadAccounts());
+            accountListModel.addAll(accountDao.load());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(clientFrame, "Error loading account data. Please try again.", "Account List Failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -96,7 +97,7 @@ public class ClientController {
         accountListModel.addElement(newAccount);
 
         try {
-            accountDao.saveAccount(newAccount);
+            accountDao.save(newAccount);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(clientFrame, "Error saving account data. Please try again.", "Open Account Failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -121,7 +122,7 @@ public class ClientController {
 
         try {
             accountListModel.clear();
-            accountListModel.addAll(accountDao.loadAccounts());
+            accountListModel.addAll(accountDao.load());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(clientFrame, "Error loading account data. Please try again.", "Account List Failed", JOptionPane.ERROR_MESSAGE);
         }
@@ -148,7 +149,7 @@ public class ClientController {
             updateAccountDetails(selectedAccount, accountDetailsTextArea);
             accountList.getSelectedValue();
             try {
-                accountDao.saveAccount(selectedAccount);
+                accountDao.save(selectedAccount);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(clientFrame, "Error saving account data. Please try again.", "Deposit Failed", JOptionPane.ERROR_MESSAGE);
             }
@@ -157,7 +158,7 @@ public class ClientController {
         }
     }
 
-    public void withdraw(Account selectedValue, JTextArea accountDetailsTextArea) throws IOException {
+    public void withdraw(Account selectedValue, JTextArea accountDetailsTextArea) throws BankException {
         Account selectedAccount = selectedValue;
         if (selectedAccount != null) {
             String amountString = JOptionPane.showInputDialog(clientFrame, "Enter Amount to Withdraw:");
@@ -168,7 +169,7 @@ public class ClientController {
                 updateAccountDetails(selectedAccount, accountDetailsTextArea);
                 JOptionPane.showMessageDialog(clientFrame, "Withdrawal Successful", "Success", JOptionPane.INFORMATION_MESSAGE);
                 try {
-                    accountDao.saveAccount(selectedAccount);
+                    accountDao.save(selectedAccount);
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(clientFrame, "Error saving account data. Please try again.", "Withdrawal Failed", JOptionPane.ERROR_MESSAGE);
                 }
@@ -222,7 +223,7 @@ public class ClientController {
         }
     }
 
-    public void requestLoan(Account selectedValue, JTextArea accountDetailsTextArea) throws IOException {
+    public void requestLoan(Account selectedValue, JTextArea accountDetailsTextArea) throws BankException {
         Account selectedAccount = selectedValue;
         if (selectedAccount != null) {
             String amountString = JOptionPane.showInputDialog(clientFrame, "Enter Amount for Loan:");
@@ -292,6 +293,6 @@ public class ClientController {
     public void logout() {
         clientFrame.dispose();
         AuthenticationController authenticationController = new AuthenticationController(userDao, accountDao);
-        authenticationController.startAuthentication();
+        authenticationController.startUserInterface();
     }
 }

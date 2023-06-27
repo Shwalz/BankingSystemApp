@@ -4,7 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import controllers.BankException;
 import controllers.ClientController;
+
 import models.Account;
 import java.io.IOException;
 
@@ -34,7 +37,6 @@ public class ClientPanel extends JPanel {
                 }
             }
         });
-
 
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -99,8 +101,7 @@ public class ClientPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     clientController.withdraw(accountList.getSelectedValue(), accountDetailsTextArea);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                } catch (BankException ex) {
                 }
             }
         });
@@ -118,8 +119,7 @@ public class ClientPanel extends JPanel {
             public void actionPerformed(ActionEvent e){
                 try {
                     clientController.requestLoan(accountList.getSelectedValue(), accountDetailsTextArea);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                } catch (BankException ex) {
                 }
             }
         });

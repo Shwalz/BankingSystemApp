@@ -7,11 +7,11 @@ import java.util.List;
 import models.User;
 import models.User.UserType;
 
-public class UserDao {
+public class UserDao extends DatabaseAccessObject<User> {
     private static final String USER_DATA_FILE = "userdata.txt";
     private static final String FILE_ENCODING = "UTF-8";
 
-    public List<User> loadUsers() throws IOException {
+    public List<User> load() throws IOException {
         List<User> users = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
@@ -19,7 +19,7 @@ public class UserDao {
                         FILE_ENCODING))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                User user = parseUserFromLine(line);
+                User user = parseFromLine(line);
                 if (user != null) {
                     users.add(user);
                 }
@@ -30,15 +30,15 @@ public class UserDao {
         return users;
     }
 
-    public void saveUser(User user) throws IOException {
-        List<User> users = loadUsers();
+    public void save(User user) throws IOException {
+        List<User> users = load();
         users.add(user);
         try (BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(
                         new FileOutputStream(USER_DATA_FILE),
                         FILE_ENCODING))) {
             for (User u : users) {
-                String line = convertUserToLine(u);
+                String line = convertToLine(u);
                 writer.write(line);
                 writer.newLine();
             }
@@ -47,7 +47,7 @@ public class UserDao {
         }
     }
 
-    private User parseUserFromLine(String line) {
+    public User parseFromLine(String line) {
         String[] parts = line.split(",");
         if (parts.length == 3) {
             String username = parts[0];
@@ -59,7 +59,7 @@ public class UserDao {
         }
     }
 
-    private String convertUserToLine(User user) {
+    public String convertToLine(User user) {
         String username = user.getUsername();
         String password = user.getPassword();
         UserType userType = user.getUserType();
