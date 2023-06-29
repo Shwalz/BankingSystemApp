@@ -1,6 +1,5 @@
 A simple banking application written in java and using things like:
 
-
 -OOP,
 -Graphic Swing interface,
 -Class interfaces, enum, abstract, exceptions,
